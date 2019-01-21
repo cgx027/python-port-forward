@@ -18,7 +18,7 @@ sudo python port-forward.py
 ```
 Add to the config file port-forward.config lines with contents as follows:
 
-<local incoming port> <dest hostname> <dest port>
+<local hostname> <local incoming port> <dest hostname> <dest port>
 ```
 
 ## Starting/stopping

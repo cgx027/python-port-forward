@@ -26,6 +26,7 @@ def main(setup, error):
     sys.stderr = file(error, 'a')
     # read settings for port forwarding
     for settings in parse(setup):
+        print("Forwarding traffic between {0}:{1} and {2}:{3}".format(settings[0], settings[1], settings[2], settings[3]))
         thread.start_new_thread(server, settings)
     # wait for <ctrl-c>
     while True:
@@ -39,18 +40,18 @@ def parse(setup):
             continue
 
         parts = line.split()
-        settings.append((int(parts[0]), parts[1], int(parts[2])))
+        settings.append((parts[0], int(parts[1]), parts[2], int(parts[3])))
     return settings
 
 def server(*settings):
     try:
         dock_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        dock_socket.bind(('', settings[0]))
+        dock_socket.bind((settings[0], settings[1]))
         dock_socket.listen(5)
         while True:
             client_socket = dock_socket.accept()[0]
             server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            server_socket.connect((settings[1], settings[2]))
+            server_socket.connect((settings[2], settings[3]))
             thread.start_new_thread(forward, (client_socket, server_socket))
             thread.start_new_thread(forward, (server_socket, client_socket))
     finally:
